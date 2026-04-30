@@ -1,0 +1,8 @@
+# screenshots / scratch images
+*.png
+*.jpg
+*.jpeg
+
+# OS
+.DS_Store
+Thumbs.db

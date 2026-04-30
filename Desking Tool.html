@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desking Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Outfit', sans-serif; background: #c5c5c5; font-size: 12px; color: #1a1a1a; }
+    #root { height: 100vh; display: flex; flex-direction: column; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #e5e5e5; }
+    ::-webkit-scrollbar-thumb { background: #aaa; border-radius: 3px; }
+    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .topbar { background: #111; height: 50px; display: flex; align-items: center; padding: 0 10px; gap: 8px; flex-shrink: 0; }
+    .topbar-center { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .topbar-lbl { font-size: 10px; color: #999; line-height: 1.2; }
+    .topbar-name { font-size: 14px; font-weight: 700; color: white; line-height: 1.2; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: #e0e0e0; color: #111; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .btn-red { background: #C8102E; color: white; border: none; border-radius: 4px; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 11px; padding: 4px 10px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+    .btn-red:hover { background: #a80d26; }
+    .btn-red-lg { font-size: 13px; padding: 7px 14px; border-radius: 5px; gap: 6px; }
+    .btn-outline { background: white; color: #222; border: 1.5px solid #c0c0c0; border-radius: 4px; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 11px; padding: 3px 8px; white-space: nowrap; }
+    .btn-outline:hover { background: #f5f5f5; }
+    .btn-outline.active { background: #C8102E; color: white; border-color: #C8102E; }
+    .ibtn { background: none; border: none; cursor: pointer; padding: 3px; display: inline-flex; align-items: center; border-radius: 3px; line-height: 0; color: inherit; }
+    .ibtn:hover { background: rgba(255,255,255,0.18); }
+    .ibtn-dk { color: #555; }
+    .ibtn-dk:hover { background: rgba(0,0,0,0.09) !important; }
+
+    .content { flex: 1; display: flex; overflow: hidden; padding: 7px; gap: 7px; }
+    .left-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 9px; overflow-y: auto; }
+    .deals-area { flex: 1; display: flex; gap: 7px; overflow-x: auto; overflow-y: hidden; align-items: stretch; padding-bottom: 2px; }
+    .card { background: white; border: 1px solid #c8c8c8; border-radius: 5px; padding: 17px 18px; }
+
+    .entity-card { display: flex; align-items: center; gap: 9px; position: relative; }
+    .entity-icon { width: 52px; height: 52px; border-radius: 10px; background: #C8102E; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; cursor: pointer; transition: background 0.15s; }
+    .entity-icon svg { width: 24px; height: 24px; }
+    .entity-icon:hover { background: #a80d26; }
+    .entity-name { font-size: 24px; font-weight: 700; line-height: 1.3; }
+    .entity-sub { font-size: 16px; color: #666; line-height: 1.4; }
+    .vin-badge { display: inline-block; background: #dceef5; color: #1e6e94; font-size: 16px; font-weight: 800; padding: 2px 7px; border-radius: 3px; margin-left: 4px; }
+    .msrp-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0 13px; border-bottom: 1px solid #eee; margin-bottom: 6px; }
+    .msrp-lbl { font-size: 22px; color: #666; font-weight: 500; }
+    .msrp-val { font-size: 30px; font-weight: 700; }
+    .price-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; }
+    .price-val { font-size: 22px; font-weight: 600; color: #1a1a1a; text-align: right; }
+    .price-val-inp { font-size: 22px; font-weight: 600; color: #1a1a1a; text-align: right; border: none; border-bottom: 1.5px solid #ddd; background: transparent; font-family: inherit; width: 100px; padding: 1px 2px; }
+    .price-val-inp:focus { outline: none; border-bottom-color: #c3002f; }
+    .price-sub { display: flex; justify-content: space-between; padding: 2px 0 2px 15px; font-size: 14px; color: #444; }
+    .caret { display: inline-block; width: 0; height: 0; cursor: pointer; margin-right: 3px; vertical-align: middle; flex-shrink: 0; }
+    .caret-d { border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #C8102E; }
+    .caret-r { border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid #C8102E; }
+    .trades-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .trade-entry { padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid #eee; }
+    .trade-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .trade-name { font-size: 22px; font-weight: 600; margin-bottom: 5px; }
+    .trade-fields { display: flex; }
+    .trade-f { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .trade-fv { font-size: 22px; font-weight: 700; }
+    .trade-inp { border: none; border-bottom: 1px solid #ddd; font-size: 22px; font-weight: 700; width: 100%; text-align: center; padding: 2px 3px; font-family: inherit; background: transparent; color: #1a1a1a; }
+    .trade-inp:focus { outline: none; border-bottom-color: #C8102E; }
+    .trade-fl { font-size: 18px; color: #888; margin-top: 2px; }
+    .trades-scroll { max-height: 260px; overflow-y: auto; }
+
+    .deal-card { flex: 1 1 0; min-width: 0; background: white; border: 1.5px solid #c8c8c8; border-radius: 5px; display: flex; flex-direction: column; overflow: hidden; height: 100%; }
+    .dc-hdr-sel { background: #1d6b1d; color: white; padding: 8px 11px; display: flex; align-items: center; gap: 7px; font-size: 22px; font-weight: 700; flex-shrink: 0; }
+    .dc-hdr-unsel { background: #e0e0e0; color: #555; padding: 8px 11px; display: flex; align-items: center; gap: 7px; font-size: 22px; font-weight: 600; flex-shrink: 0; }
+    .hdr-sp { flex: 1; }
+    .roll-btn { background: none; border: 1px solid rgba(255,255,255,0.45); color: white; font-size: 20px; font-weight: 700; padding: 3px 12px; border-radius: 3px; cursor: pointer; font-family: inherit; }
+    .roll-btn:hover { background: rgba(255,255,255,0.12); }
+    .roll-btn-dk { border-color: #bbb; color: #555; }
+    .roll-btn-dk:hover { background: rgba(0,0,0,0.07); }
+    .chk { width: 22px; height: 22px; border: 2px solid rgba(255,255,255,0.7); border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; }
+    .chk-unsel { width: 22px; height: 22px; border: 2px solid #999; border-radius: 3px; display: inline-block; cursor: pointer; }
+    .dc-body { padding: 15px 16px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .dc-top { flex: 0 0 auto; display: flex; flex-direction: column; }
+    .dp-section { height: 220px; flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .dc-bottom { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+    .type-tabs { display: flex; gap: 6px; margin-bottom: 22px; }
+    .deal-card .btn-outline { font-size: 19px; font-weight: 500; padding: 6px 14px; border: 3px solid #c3002f; color: #c3002f; }
+    .deal-card .btn-outline.active { color: white; }
+    .deal-card .btn-red { font-size: 18px; font-weight: 500; padding: 4px 12px; }
+    .price-row .btn-red { font-size: 18px; font-weight: 600; padding: 5px 14px; }
+    .term-section { height: 82px; flex-shrink: 0; }
+    .term-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 27px; }
+    .term-f { flex: 1; display: flex; flex-direction: column; align-items: stretch; min-width: 0; }
+    .term-lbl { font-size: 18px; color: #888; margin-bottom: 3px; text-align: center; }
+    .term-inp { text-align: center; border: none; border-bottom: 1.5px solid #ccc; font-size: 22px; font-weight: 700; padding: 2px 3px; font-family: inherit; background: transparent; width: 100%; min-width: 0; color: #1a1a1a; }
+    .term-inp:focus { outline: none; border-bottom-color: #C8102E; }
+    .term-red { color: #C8102E; }
+    .dp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; min-height: 54px; }
+    .dp-radio { width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid #b0b0b0; cursor: pointer; flex-shrink: 0; }
+    .dp-radio-on { background: #C8102E; border-color: #C8102E; }
+    .dp-amt { border: none; border-bottom: 1px solid #ddd; font-size: 22px; width: 110px; padding: 2px 4px; font-family: inherit; background: transparent; color: #999; }
+    .dp-amt::placeholder { color: #ccc; }
+    .dp-amt:focus { outline: none; border-bottom-color: #C8102E; color: #333; }
+    .dp-pay { flex: 1; text-align: right; font-size: 30px; font-weight: 700; color: #222; }
+    .dp-pay-on { color: #C8102E; }
+    .add-dp { font-size: 20px; color: #C8102E; background: none; border: none; cursor: pointer; padding: 3px 0; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-bottom: 15px; }
+    .sep { border: none; border-top: 1px solid #ebebeb; margin: 21px 0; }
+    .sec-row { display: flex; align-items: center; gap: 7px; margin: 14px 0; }
+    .sec-total { flex: 1; text-align: right; font-size: 24px; font-weight: 600; }
+    .sec-items { padding-left: 28px; margin-bottom: 4px; max-height: 120px; overflow-y: auto; }
+    .sec-item { display: flex; justify-content: space-between; font-size: 14px; color: #444; padding: 2px 0; }
+    .sec-ph { color: #ccc; font-size: 22px; font-style: italic; }
+    .cash-big { font-size: 62px; font-weight: 800; color: #C8102E; text-align: center; padding: 30px 0 18px; }
+    .dc-footer { border-top: 1.5px solid #e0e0e0; padding: 9px 12px; display: flex; justify-content: space-between; align-items: baseline; flex-shrink: 0; }
+    .dc-foot-lbl { font-size: 20px; color: #666; }
+    .dc-foot-val { font-size: 32px; font-weight: 800; }
+    .add-deal-btn { flex: 0 0 56px; width: 56px; border: 2.5px dashed #C8102E; border-radius: 5px; background: transparent; color: #C8102E; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; align-self: stretch; }
+    .add-deal-btn:hover { background: rgba(200,16,46,0.04); }
+
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.52); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .mbox { background: white; border-radius: 6px; padding: 20px 22px; min-width: 340px; max-width: 520px; width: 92%; box-shadow: 0 10px 40px rgba(0,0,0,0.28); }
+    .mbox-lg { max-width: 600px; }
+    .mtitle { font-size: 15px; font-weight: 800; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .mfield { margin-bottom: 11px; }
+    .mfield label { display: block; font-size: 10px; color: #777; margin-bottom: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .mfield input, .mfield select { width: 100%; padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 13px; background: white; color: #1a1a1a; }
+    .mfield input:focus, .mfield select:focus { outline: none; border-color: #C8102E; }
+    .mrow { display: flex; gap: 10px; }
+    .mrow .mfield { flex: 1; }
+    .mactions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+    .btn-cancel { background: white; border: 1.5px solid #ccc; border-radius: 4px; padding: 7px 18px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; color: #555; }
+    .btn-cancel:hover { background: #f5f5f5; }
+    .btn-save { background: #C8102E; color: white; border: none; border-radius: 4px; padding: 7px 18px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; }
+    .btn-save:hover { background: #a80d26; }
+    .msec-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin: 14px 0 8px; border-top: 1px solid #eee; padding-top: 10px; }
+    .mitem-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .mitem-row input { flex: 1; padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 12px; }
+    .mitem-row .iamt { width: 90px; flex-shrink: 0; text-align: right; }
+    .btn-add-item { background: none; border: 1.5px dashed #C8102E; color: #C8102E; border-radius: 4px; padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 11px; font-weight: 700; width: 100%; margin-top: 4px; }
+    .btn-add-item:hover { background: rgba(200,16,46,0.04); }
+    .inv-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 10px; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 6px; cursor: pointer; }
+    .inv-row:hover { border-color: #C8102E; background: #fafafa; }
+    .inv-row-sel { background: #fff5f7; border-color: #C8102E; }
+    .tax-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+    .roll-fields { display: flex; gap: 10px; margin-bottom: 12px; }
+    .roll-f { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    .roll-f label { font-size: 10px; color: #888; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .roll-f input { text-align: center; border: 1px solid #ccc; border-radius: 4px; padding: 8px 6px; font-size: 16px; font-weight: 700; font-family: inherit; width: 100%; }
+    .roll-result { background: #f8f8f8; border-radius: 5px; padding: 14px; text-align: center; }
+    .roll-res-lbl { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; letter-spacing: 0.06em; }
+    .roll-res-val { font-size: 36px; font-weight: 800; color: #C8102E; margin-top: 4px; }
+    .menu-opt { display: flex; align-items: center; gap: 10px; padding: 10px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; border: 1px solid transparent; margin-bottom: 4px; }
+    .menu-opt:hover { background: #fdf0f2; border-color: #f0c0c8; }
+    .menu-opt-del { color: #C8102E; }
+    .menu-opt-del:hover { background: #fff0f2; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef } = React;
+
+// ── SVG ICONS ────────────────────────────────────────────────────────────────
+const Ico = ({ d, size=14, stroke=2, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" {...p}>
+    {Array.isArray(d) ? d.map((x,i) => <path key={i} d={x} />) : <path d={d} />}
+  </svg>
+);
+const IcoArrowLeft = ({size=14}) => <Ico size={size} d="m15 18-6-6 6-6" />;
+const IcoSend = ({size=14}) => <Ico size={size} d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />;
+const IcoPrint = ({size=14}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+    <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/>
+    <rect x="6" y="14" width="12" height="8" rx="1"/>
+  </svg>
+);
+const IcoUser = ({size=15}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.925 20.056a6 6 0 0 0-11.851.001"/>
+    <circle cx="12" cy="11" r="4"/>
+    <circle cx="12" cy="12" r="10"/>
+  </svg>
+);
+const IcoCar = ({size=15}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+    <circle cx="7" cy="17" r="2"/>
+    <path d="M9 17h6"/>
+    <circle cx="17" cy="17" r="2"/>
+  </svg>
+);
+const IcoPencil = ({size=12}) => <Ico size={size} d={["M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7","M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"]} />;
+const IcoRefresh = ({size=16}) => <Ico size={size} d={["M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8","M3 3v5h5","M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16","M16 16h5v5"]} />;
+const IcoCopy = ({size=13}) => <Ico size={size} d={["M15 2h-4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8","M16.706 2.706A2.4 2.4 0 0 0 15 2v5a1 1 0 0 0 1 1h5a2.4 2.4 0 0 0-.706-1.706z","M5 7a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 1.732-1"]} />;
+const IcoTrash = ({size=13}) => <Ico size={size} d={["M10 11v6","M14 11v6","M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6","M3 6h18","M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"]} />;
+const IcoMore = ({size=13}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
+  </svg>
+);
+const IcoPlus = ({size=11}) => <Ico size={size} d="M12 5v14M5 12h14" />;
+const IcoCheck = ({size=9}) => <Ico size={size} stroke={3} d="m9 11 3 3L22 4" />;
+const IcoX = ({size=15}) => <Ico size={size} stroke={2.5} d="M18 6L6 18M6 6l12 12" />;
+const IcoFile = ({size=15}) => <Ico size={size} d={["M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z","M14 2v6h6","M16 13H8M16 17H8M10 9H8"]} />;
+const IcoDollar = ({size=15}) => <Ico size={size} d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />;
+const IcoPct = ({size=15}) => <Ico size={size} d={["M19 5L5 19","M6.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3z","M17.5 20a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"]} />;
+const IcoCalc = ({size=15}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8"/>
+    <path d="M10 19v-3.96 3.15"/><path d="M7 19h5"/>
+    <rect width="6" height="10" x="16" y="12" rx="2"/>
+  </svg>
+);
+
+// ── MODAL SHELL ─────────────────────────────────────────────────────────────
+function Modal({ title, onClose, children, lg }) {
+  return (
+    <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className={"mbox" + (lg ? " mbox-lg" : "")}>
+        <div className="mtitle">
+          <span>{title}</span>
+          <button className="ibtn ibtn-dk" onClick={onClose}><IcoX /></button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ── CUSTOMER MODAL ──────────────────────────────────────────────────────────
+function CustomerModal({ customer, onSave, onClose }) {
+  const [f, setF] = useState({ ...customer });
+  const set = (k,v) => setF(x => ({...x,[k]:v}));
+  return (
+    <Modal title="Edit Customer" onClose={onClose}>
+      <div className="mrow">
+        <div className="mfield"><label>First Name</label><input value={f.firstName} onChange={e=>set('firstName',e.target.value)} /></div>
+        <div className="mfield"><label>Last Name</label><input value={f.lastName} onChange={e=>set('lastName',e.target.value)} /></div>
+      </div>
+      <div className="mfield"><label>Address</label><input value={f.address} onChange={e=>set('address',e.target.value)} /></div>
+      <div className="mrow">
+        <div className="mfield"><label>City</label><input value={f.city} onChange={e=>set('city',e.target.value)} /></div>
+        <div className="mfield" style={{maxWidth:58}}><label>State</label><input value={f.state} onChange={e=>set('state',e.target.value)} /></div>
+        <div className="mfield" style={{maxWidth:80}}><label>ZIP</label><input value={f.zip} onChange={e=>set('zip',e.target.value)} /></div>
+      </div>
+      <div className="mrow">
+        <div className="mfield"><label>Phone</label><input value={f.phone} onChange={e=>set('phone',e.target.value)} /></div>
+        <div className="mfield"><label>Email</label><input value={f.email} onChange={e=>set('email',e.target.value)} /></div>
+      </div>
+      <div className="mactions">
+        <button className="btn-cancel" onClick={onClose}>Cancel</button>
+        <button className="btn-save" onClick={()=>onSave(f)}>Save Customer</button>
+      </div>
+    </Modal>
+  );
+}
+
+// ── VEHICLE MODAL ───────────────────────────────────────────────────────────
+const INVENTORY = [
+  {id:1,year:2026,make:'Honda',model:'Passport',trim:'EX-L',vin:'5FNYF9H58TB062578',stock:'HN264',msrp:50600,color:'Lunar Silver'},
+  {id:2,year:2026,make:'Honda',model:'Pilot',trim:'TrailSport',vin:'5FNYF8H95RB019341',stock:'HN271',msrp:52900,color:'Sonic Gray Pearl'},
+  {id:3,year:2026,make:'Honda',model:'CR-V',trim:'Touring',vin:'2HKRW2H83RH601234',stock:'HN209',msrp:39800,color:'Radiant Red'},
+  {id:4,year:2025,make:'Honda',model:'Accord',trim:'Sport Hybrid',vin:'1HGCY2F58SA012345',stock:'HA891',msrp:35200,color:'Meteoroid Gray'},
+  {id:5,year:2026,make:'Honda',model:'Odyssey',trim:'Elite',vin:'5FNRL6H97RB021009',stock:'HO114',msrp:51100,color:'Platinum White Pearl'},
+];
+function VehicleModal({ vehicle, onSave, onClose }) {
+  const [q, setQ] = useState('');
+  const [sel, setSel] = useState(vehicle?.id || null);
+  const list = INVENTORY.filter(v => (v.year+' '+v.make+' '+v.model+' '+v.trim+' '+v.stock).toLowerCase().includes(q.toLowerCase()));
+  return (
+    <Modal title="Select Vehicle from Inventory" onClose={onClose} lg>
+      <input placeholder="Search year, model, stock #..." value={q} onChange={e=>setQ(e.target.value)}
+        style={{width:'100%',padding:'8px 10px',border:'1px solid #ccc',borderRadius:4,fontFamily:'inherit',fontSize:13,marginBottom:12}} />
+      {list.map(v => (
+        <div key={v.id} className={"inv-row"+(sel===v.id?' inv-row-sel':'')} onClick={()=>setSel(v.id)}>
+          <div>
+            <div style={{fontWeight:700,fontSize:13}}>{v.year} {v.make} {v.model} <span style={{fontWeight:500,color:'#666'}}>{v.trim}</span></div>
+            <div style={{fontSize:11,color:'#888',marginTop:2}}>VIN: {v.vin} · Stock: {v.stock} · {v.color}</div>
+          </div>
+          <div style={{textAlign:'right'}}>
+            <div style={{fontWeight:700,fontSize:14}}>${v.msrp.toLocaleString()}</div>
+            {sel===v.id && <div style={{color:'#C8102E',fontSize:11,fontWeight:700}}>✓ Selected</div>}
+          </div>
+        </div>
+      ))}
+      <div className="mactions">
+        <button className="btn-cancel" onClick={onClose}>Cancel</button>
+        <button className="btn-save" disabled={!sel} onClick={()=>{const v=INVENTORY.find(x=>x.id===sel);onSave(v);}}>Load Vehicle</button>
+      </div>
+    </Modal>
+  );
+}
+
+// ── SALE PRICE MODAL ─────────────────────────────────────────────────────────
+function SalePriceModal({ pricing, onSave, onClose }) {
+  const [items, setItems] = useState(pricing.discountItems || [{label:'Discount',amount:-1500}]);
+  const add = () => setItems(i=>[...i,{label:'',amount:0}]);
+  const del = idx => setItems(i=>i.filter((_,n)=>n!==idx));
+  const upd = (idx,k,v) => setItems(i=>i.map((x,n)=>n===idx?{...x,[k]:v}:x));
+  const total = items.reduce((s,i)=>s+Number(i.amount),0);
+  const sp = pricing.msrp + total;
+  return (
+    <Modal title="Edit Sale Price" onClose={onClose}>
+      <div style={{display:'flex',justifyContent:'space-between',padding:'6px 0',marginBottom:8,borderBottom:'1px solid #eee'}}>
+        <span style={{color:'#666',fontSize:12}}>MSRP</span>
+        <span style={{fontWeight:700,fontSize:15}}>${pricing.msrp.toLocaleString()}</span>
+      </div>
+      <div className="msec-title" style={{marginTop:0,borderTop:'none',paddingTop:0}}>Discount Line Items</div>
+      {items.map((item,idx) => (
+        <div key={idx} className="mitem-row">
+          <input placeholder="Description" value={item.label} onChange={e=>upd(idx,'label',e.target.value)} />
+          <input placeholder="Amount" value={item.amount} className="iamt" onChange={e=>upd(idx,'amount',e.target.value)} />
+          <button className="ibtn ibtn-dk" onClick={()=>del(idx)}><IcoTrash /></button>
+        </div>
+      ))}
+      <button className="btn-add-item" onClick={add}>+ Add Line Item</button>
+      <div style={{display:'flex',justifyContent:'space-between',padding:'10px 0 0',marginTop:8,borderTop:'1px solid #eee'}}>
+        <span style={{fontWeight:700}}>Sale Price</span>
+        <span style={{fontWeight:800,fontSize:16,color:sp<pricing.msrp?'#1a6b1a':'#C8102E'}}>${sp.toLocaleString()}</span>
+      </div>
+      <div className="mactions">
+        <button className="btn-cancel" onClick={onClose}>Cancel</button>
+        <button className="btn-save" onClick={()=>onSave({...pricing,salePrice:sp,discount:Math.abs(total),discountItems:items})}>Apply</button>
+      </div>
+    </Modal>
+  );
+}
+
+// ── TAX MODAL ────────────────────────────────────────────────────────────────
+function TaxModal({ pricing, onSave, onClose }) {
+  const [f, setF] = useState({stateTax:6.75,countyTax:0,outOfState:0,credit:1755,county:'Fairfield, OH'});
+  const set = (k,v) => setF(x=>({...x,[k]:v}));
+  const base = pricing.salePrice;
+  const stAmt = base*(f.stateTax/100);
+  const ctAmt = base*(f.countyTax/100);
+  const total = stAmt + ctAmt - Number(f.credit);
+  return (
+    <Modal title="Tax Information" onClose={onClose}>
+      <div className="mrow">
+        <div className="mfield"><label>County / Locale</label><input value={f.county} onChange={e=>set('county',e.target.value)} /></div>
+        <div className="mfield" style={{maxWidth:90}}><label>State Tax %</label><input type="number" value={f.stateTax} onChange={e=>set('stateTax',e.target.value)} /></div>
+      </div>
+      <div className="mrow">
+        <div className="mfield" style={{maxWidth:90}}><label>County Tax %</label><input type="number" value={f.countyTax} onChange={e=>set('countyTax',e.target.value)} /></div>
+        <div className="mfield" style={{maxWidth:90}}><label>Out of State %</label><input type="number" value={f.outOfState} onChange={e=>set('outOfState',e.target.value)} /></div>
+        <div className="mfield"><label>Vehicle Tax Credit</label><input type="number" value={f.credit} onChange={e=>set('credit',e.target.value)} /></div>
+      </div>
+      <div className="msec-title">Tax Breakdown</div>
+      <div className="tax-row"><span>{f.county} ({f.stateTax}%)</span><span style={{fontWeight:700}}>${stAmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>
+      {ctAmt > 0 && <div className="tax-row"><span>County Tax ({f.countyTax}%)</span><span style={{fontWeight:700}}>${ctAmt.toFixed(2)}</span></div>}
+      <div className="tax-row"><span>OH Trade Allowance</span><span style={{fontWeight:700,color:'#C8102E'}}>-${Number(f.credit).toLocaleString()}</span></div>
+      <div className="tax-row" style={{borderBottom:'none',paddingTop:8,marginTop:4,borderTop:'1px solid #ddd'}}><span style={{fontWeight:700}}>Total Tax</span><span style={{fontWeight:800,fontSize:15}}>${total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>
+      <div className="mactions">
+        <button className="btn-cancel" onClick={onClose}>Cancel</button>
+        <button className="btn-save" onClick={()=>onSave({...pricing,taxes:total,taxRate:Number(f.stateTax)+Number(f.countyTax)+Number(f.outOfState),taxItems:[{label:`${f.county} (${f.stateTax}%)`,amount:stAmt},{label:'OH Trade Allowance',amount:-f.credit}]})}>Apply</button>
+      </div>
+    </Modal>
+  );
+}
+
+// ── TRADE MODAL ──────────────────────────────────────────────────────────────
+function TradeModal({ trades, onSave, onClose }) {
+  const [list, setList] = useState(trades.map(t=>({...t})));
+  let nid = 100;
+  const add = () => setList(l=>[...l,{id:nid++,year:2024,make:'',model:'',vin:'',allowance:0,payoff:0,acv:0}]);
+  const del = idx => setList(l=>l.filter((_,n)=>n!==idx));
+  const upd = (idx,k,v) => setList(l=>l.map((x,n)=>n===idx?{...x,[k]:v}:x));
+  return (
+    <Modal title="Trade-In Manager" onClose={onClose} lg>
+      <div style={{maxHeight:400,overflowY:'auto'}}>
+        {list.map((t,idx) => (
+          <div key={t.id} style={{border:'1px solid #e0e0e0',borderRadius:5,padding:'12px 14px',marginBottom:10}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+              <span style={{fontWeight:700,fontSize:13}}>Trade #{idx+1}</span>
+              <button className="ibtn ibtn-dk" onClick={()=>del(idx)}><IcoTrash size={14} /></button>
+            </div>
+            <div className="mrow">
+              <div className="mfield" style={{maxWidth:72}}><label>Year</label><input type="number" value={t.year} onChange={e=>upd(idx,'year',e.target.value)} /></div>
+              <div className="mfield"><label>Make</label><input value={t.make} onChange={e=>upd(idx,'make',e.target.value)} /></div>
+              <div className="mfield"><label>Model</label><input value={t.model} onChange={e=>upd(idx,'model',e.target.value)} /></div>
+            </div>
+            <div className="mfield"><label>VIN</label><input value={t.vin} onChange={e=>upd(idx,'vin',e.target.value)} /></div>
+            <div className="mrow">
+              <div className="mfield"><label>Allowance</label><input type="number" value={t.allowance} onChange={e=>upd(idx,'allowance',e.target.value)} /></div>
+              <div className="mfield"><label>Payoff</label><input type="number" value={t.payoff} onChange={e=>upd(idx,'payoff',e.target.value)} /></div>
+              <div className="mfield"><label>ACV</label><input type="number" value={t.acv} onChange={e=>upd(idx,'acv',e.target.value)} /></div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button className="btn-add-item" onClick={add}>+ Add Trade</button>
+      <div className="mactions">
+        <button className="btn-cancel" onClick={onClose}>Cancel</button>
+        <button className="btn-save" onClick={()=>onSave(list)}>Save Trades</button>
+      </div>
+    </Modal>
+  );
+}
+
+// ── ROLL MODAL ───────────────────────────────────────────────────────────────
+function RollModal({ deal, onClose }) {
+  const [target, setTarget] = useState('');
+  const [rate, setRate] = useState(deal.rate || 4.99);
+  const [term, setTerm] = useState(deal.term || 60);
+  const [down, setDown] = useState(0);
+  const pmt = target ? ((Number(target)-Number(down))*(Number(rate)/100/12))/(1-Math.pow(1+Number(rate)/100/12,-Number(term))) : null;
+  return (
+    <Modal title="Roll Payment" onClose={onClose}>
+      <div className="roll-fields">
+        <div className="roll-f"><label>Desired Payment</label><input value={target} onChange={e=>setTarget(e.target.value)} placeholder="$0.00" /></div>
+        <div className="roll-f"><label>Down Payment</label><input value={down} onChange={e=>setDown(e.target.value)} /></div>
+      </div>
+      <div className="roll-fields">
+        <div className="roll-f"><label>Rate %</label><input type="number" value={rate} onChange={e=>setRate(e.target.value)} /></div>
+        <div className="roll-f"><label>Term (mo)</label><input type="number" value={term} onChange={e=>setTerm(e.target.value)} /></div>
+      </div>
+      <div className="roll-result">
+        <div className="roll-res-lbl">Estimated Payment</div>
+        <div className="roll-res-val">{pmt && !isNaN(pmt) ? '$'+pmt.toFixed(2) : '—'}</div>
+      </div>
+      <div className="mactions"><button className="btn-cancel" onClick={onClose}>Close</button></div>
+    </Modal>
+  );
+}
+
+// ── LINE ITEMS MODAL (Fees / Addons / Rebates) ───────────────────────────────
+function LineItemModal({ title, items: init, onSave, onClose }) {
+  const [items, setItems] = useState(init.map(x=>({...x})));
+  const add = () => setItems(i=>[...i,{label:'',amount:0}]);
+  const del = idx => setItems(i=>i.filter((_,n)=>n!==idx));
+  const upd = (idx,k,v) => setItems(i=>i.map((x,n)=>n===idx?{...x,[k]:v}:x));
+  const total = items.reduce((s,i)=>s+Number(i.amount),0);
+  return (
+    <Modal title={title} onClose={onClose}>
+      {items.map((item,idx) => (
+        <div key={idx} className="mitem-row">
+          <input placeholder="Description" value={item.label} onChange={e=>upd(idx,'label',e.target.value)} />
+          <input placeholder="$0" value={item.amount} className="iamt" onChange={e=>upd(idx,'amount',e.target.value)} />
+          <button className="ibtn ibtn-dk" onClick={()=>del(idx)}><IcoTrash /></button>
+        </div>
+      ))}
+      <button className="btn-add-item" onClick={add}>+ Add Item</button>
+      <div style={{display:'flex',justifyContent:'space-between',padding:'10px 0 0',marginTop:8,borderTop:'1px solid #eee'}}>
+        <span style={{fontWeight:700}}>Total</span>
+        <span style={{fontWeight:800,fontSize:16}}>${Number(total).toLocaleString()}</span>
+      </div>
+      <div className="mactions">
+        <button className="btn-cancel" onClick={onClose}>Cancel</button>
+        <button className="btn-save" onClick={()=>onSave(items)}>Apply</button>
+      </div>
+    </Modal>
+  );
+}
+
+// ── DEAL MENU MODAL ──────────────────────────────────────────────────────────
+function DealMenuModal({ deal, onClose, onDuplicate, onDelete, onChangeType }) {
+  return (
+    <Modal title="Deal Options" onClose={onClose}>
+      <div className="menu-opt" onClick={()=>{onDuplicate();onClose();}}><IcoFile /><span>Duplicate Deal Card</span></div>
+      <div className="menu-opt" onClick={()=>{onChangeType('finance');onClose();}}><IcoDollar /><span>Switch to Finance</span></div>
+      <div className="menu-opt" onClick={()=>{onChangeType('lease');onClose();}}><IcoPct /><span>Switch to Lease</span></div>
+      <div className="menu-opt" onClick={()=>{onChangeType('cash');onClose();}}><IcoCalc /><span>Switch to Cash</span></div>
+      <div className="menu-opt menu-opt-del" onClick={()=>{onDelete();onClose();}}><IcoTrash size={15} /><span>Delete Deal</span></div>
+      <div className="mactions"><button className="btn-cancel" onClick={onClose}>Close</button></div>
+    </Modal>
+  );
+}
+
+// ── LEFT PANEL COMPONENTS ────────────────────────────────────────────────────
+function CustomerCard({ customer, onEdit }) {
+  return (
+    <div className="card">
+      <div className="entity-card">
+        <div className="entity-icon" onClick={onEdit} title="Edit Customer"><IcoUser /></div>
+        <div style={{flex:1,minWidth:0}}>
+          <div className="entity-name">{customer.firstName} {customer.lastName}</div>
+          <div className="entity-sub">{customer.address}<br />{customer.city}, {customer.state} {customer.zip}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+function VehicleCard({ vehicle, onEdit }) {
+  if (!vehicle) return (
+    <div className="card" style={{textAlign:'center',padding:'12px 8px'}}>
+      <div style={{color:'#aaa',fontSize:12,marginBottom:8}}>No vehicle loaded</div>
+      <button className="btn-red" onClick={onEdit}><IcoCar /> Select Vehicle</button>
+    </div>
+  );
+  return (
+    <div className="card">
+      <div className="entity-card">
+        <div className="entity-icon" onClick={onEdit} title="Select Vehicle"><IcoCar /></div>
+        <div style={{flex:1,minWidth:0}}>
+          <div className="entity-name">{vehicle.year} {vehicle.make} {vehicle.model}</div>
+          <div className="entity-sub" style={{wordBreak:'break-all',fontSize:10}}>
+            {vehicle.vin}<span className="vin-badge">{vehicle.stock}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+function PriceCard({ pricing, onEditSalePrice, onEditTax, onUpdateSalePrice }) {
+  const [priceOpen, setPriceOpen] = useState(true);
+  const [taxOpen, setTaxOpen] = useState(true);
+  return (
+    <div className="card">
+      <div className="msrp-row">
+        <span className="msrp-lbl">MSRP</span>
+        <span className="msrp-val">${pricing.msrp.toLocaleString()}</span>
+      </div>
+      <div className="price-row">
+        <div style={{display:'flex',alignItems:'center',gap:4}}>
+          <span className={"caret "+(priceOpen?'caret-d':'caret-r')} onClick={()=>setPriceOpen(o=>!o)} />
+          <button className="btn-red" onClick={onEditSalePrice}>Sale Price</button>
+        </div>
+        <input
+          className="price-val-inp"
+          value={pricing.salePrice}
+          onChange={e=>onUpdateSalePrice(Number(e.target.value))}
+          onFocus={e=>e.target.select()}
+          type="number"
+        />
+      </div>
+      {priceOpen && (pricing.discountItems||[{label:'Discount',amount:-pricing.discount}]).map((item,i)=>(
+        <div key={i} className="price-sub">
+          <span>{item.label}</span>
+          <span>{item.amount<0?'-':'+'}${Math.abs(item.amount).toLocaleString()}</span>
+        </div>
+      ))}
+      <div className="price-row" style={{marginTop:3}}>
+        <div style={{display:'flex',alignItems:'center',gap:4}}>
+          <span className={"caret "+(taxOpen?'caret-d':'caret-r')} onClick={()=>setTaxOpen(o=>!o)} />
+          <button className="btn-red" onClick={onEditTax}>Taxes</button>
+        </div>
+        <span className="price-val">${pricing.taxes.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+      </div>
+      {taxOpen && (pricing.taxItems||[]).map((item,i)=>(
+        <div key={i} className="price-sub">
+          <span>{item.label}</span>
+          <span style={{color:item.amount<0?'#555':'#333'}}>{item.amount<0?'-':''}${Math.abs(item.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+function TradesCard({ trades, onEdit, onUpdateTrade }) {
+  return (
+    <div className="card" style={{flex:1}}>
+      <div className="trades-hdr">
+        <div style={{display:'flex',alignItems:'center',gap:7}}>
+          <div style={{width:52,height:52,borderRadius:10,background:'#C8102E',display:'flex',alignItems:'center',justifyContent:'center',color:'white',cursor:'pointer',transition:'background 0.15s'}}
+            onClick={onEdit} title="Edit Trades"
+            onMouseEnter={e=>e.currentTarget.style.background='#a80d26'}
+            onMouseLeave={e=>e.currentTarget.style.background='#C8102E'}>
+            <IcoRefresh size={24} />
+          </div>
+          <span style={{fontSize:24,fontWeight:700}}>Trades</span>
+        </div>
+      </div>
+      <div className="trades-scroll">
+        {trades.length===0 && <div style={{color:'#aaa',fontSize:12,textAlign:'center',padding:'8px 0'}}>No trades added</div>}
+        {trades.map((t,idx) => (
+          <div key={t.id} className="trade-entry">
+            <div className="trade-name">{t.year} {t.make} {t.model}</div>
+            <div className="trade-fields">
+              <div className="trade-f">
+                <input className="trade-inp" type="number" value={t.allowance} onChange={e=>onUpdateTrade(idx,'allowance',e.target.value)} onFocus={e=>e.target.select()} />
+                <span className="trade-fl">Allowance</span>
+              </div>
+              <div className="trade-f">
+                <input className="trade-inp" type="number" value={t.payoff} onChange={e=>onUpdateTrade(idx,'payoff',e.target.value)} onFocus={e=>e.target.select()} />
+                <span className="trade-fl">Payoff</span>
+              </div>
+              <div className="trade-f">
+                <input className="trade-inp" type="number" value={t.acv} onChange={e=>onUpdateTrade(idx,'acv',e.target.value)} onFocus={e=>e.target.select()} />
+                <span className="trade-fl">ACV</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── CALCULATIONS ─────────────────────────────────────────────────────────────
+function calcDeal(deal, pricing, trades) {
+  const sum = arr => (arr || []).reduce((s, i) => s + Number(i.amount), 0);
+  const feesTotal    = sum(deal.fees?.items);
+  const addonsTotal  = sum(deal.addons?.items);
+  const rebatesTotal = sum(deal.rebates?.items);
+  const tradeEquity  = (trades || []).reduce((s, t) => s + (Number(t.allowance) - Number(t.payoff)), 0);
+
+  const sp      = Number(pricing.salePrice) || 0;
+  const taxAmt  = Number(pricing.taxes)     || 0;
+  const taxRate = Number(pricing.taxRate)   || 6.75;
+  const msrp    = Number(pricing.msrp)      || 0;
+
+  const calcPayment = (downAmount) => {
+    const down = Number(downAmount) || 0;
+    if (deal.type === 'finance') {
+      const pv = sp + taxAmt + feesTotal + addonsTotal - rebatesTotal - tradeEquity - down;
+      const r  = Number(deal.rate) / 100 / 12;
+      const n  = Number(deal.term);
+      if (r === 0 || !n) return { payment: n ? pv / n : 0, primary: pv };
+      const pmt = (pv * r) / (1 - Math.pow(1 + r, -n));
+      return { payment: isFinite(pmt) ? pmt : 0, primary: pv };
+    }
+    if (deal.type === 'lease') {
+      const netCapCost  = sp + feesTotal + addonsTotal - rebatesTotal - tradeEquity - down;
+      const residualVal = msrp * (Number(deal.residual) / 100);
+      const mf          = Number(deal.mf) || 0;
+      const term        = Number(deal.term);
+      if (!term) return { payment: 0, primary: netCapCost };
+      const depreciation  = (netCapCost - residualVal) / term;
+      const financeCharge = (netCapCost + residualVal) * mf;
+      const base          = depreciation + financeCharge;
+      const payment       = base * (1 + taxRate / 100);
+      return { payment: isFinite(payment) ? payment : 0, primary: netCapCost };
+    }
+    return { payment: 0, primary: 0 };
+  };
+
+  if (deal.type === 'cash') {
+    const otd = sp + taxAmt + feesTotal + addonsTotal - rebatesTotal - tradeEquity;
+    return { payments: [], footerLabel: 'OTD Price', footerVal: otd, tradeEquity };
+  }
+
+  const payments = (deal.downPayments || []).map(dp => ({
+    ...dp, computed: calcPayment(dp.amount),
+  }));
+  const activePrimary = payments[deal.activeDP]?.computed.primary ?? 0;
+  const footerLabel = deal.type === 'finance' ? 'Amt. Financed' : 'Cap Cost';
+  return { payments, footerLabel, footerVal: activePrimary, tradeEquity };
+}
+
+// ── DEAL CARD ─────────────────────────────────────────────────────────────────
+function SectionBlock({ label, data, open, onToggle, onEdit }) {
+  const total = data.items.reduce((s,i)=>s+Number(i.amount),0);
+  const has = data.items.length > 0;
+  return (
+    <div>
+      <div className="sec-row">
+        <span className={"caret "+(open?'caret-d':'caret-r')} onClick={onToggle} />
+        <button className="btn-red" onClick={onEdit}>{label}</button>
+        <span className="sec-total">{has ? '$'+total.toLocaleString() : <span className="sec-ph">{label}...</span>}</span>
+      </div>
+      {open && has && (
+        <div className="sec-items">
+          {data.items.map((item,i)=>(
+            <div key={i} className="sec-item"><span>{item.label}</span><span>${Number(item.amount).toLocaleString()}</span></div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DealCard({ deal, pricing, trades, onUpdate, onSelect, onDuplicate, onDelete, setModal }) {
+  const [feesOpen, setFeesOpen] = useState(deal.feesOpen !== undefined ? deal.feesOpen : true);
+  const [addonsOpen, setAddonsOpen] = useState(deal.addonsOpen !== undefined ? deal.addonsOpen : true);
+  const [rebatesOpen, setRebatesOpen] = useState(deal.rebatesOpen !== undefined ? deal.rebatesOpen : false);
+  const [showMenu, setShowMenu] = useState(false);
+
+  const calc = calcDeal(deal, pricing, trades);
+  const upd = (k,v) => onUpdate({...deal,[k]:v});
+  const setDPActive = idx => onUpdate({...deal,activeDP:idx});
+  const setDPVal = (idx,k,v) => {
+    const dps = deal.downPayments.map((d,n)=>n===idx?{...d,[k]:v}:d);
+    onUpdate({...deal,downPayments:dps});
+  };
+  const addDP = () => {
+    if(deal.downPayments.length>=3) return;
+    onUpdate({...deal,downPayments:[...deal.downPayments,{amount:null,payment:null}]});
+  };
+  const removeDP = idx => {
+    const dps = deal.downPayments.filter((_,n)=>n!==idx);
+    onUpdate({...deal,downPayments:dps,activeDP:Math.min(deal.activeDP,dps.length-1)});
+  };
+
+  const fees = deal.fees || {items:[]};
+  const addons = deal.addons || {items:[]};
+  const rebates = deal.rebates || {items:[]};
+  const footerLabel = calc.footerLabel;
+  const footerVal = '$' + calc.footerVal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  const Hdr = deal.selected ? (
+    <div className="dc-hdr-sel">
+      <div className="chk" style={{cursor:'pointer'}} onClick={onSelect}><IcoCheck /></div>
+      <span style={{cursor:'pointer'}} onClick={onSelect}>Selected</span>
+      <span className="hdr-sp" />
+      <button className="roll-btn" onClick={()=>setModal({type:'roll',dealId:deal.id})}>Roll</button>
+      <button className="ibtn" onClick={onDuplicate}><IcoCopy /></button>
+      <button className="ibtn" onClick={onDelete}><IcoTrash /></button>
+      <button className="ibtn" onClick={()=>setShowMenu(true)}><IcoMore /></button>
+    </div>
+  ) : (
+    <div className="dc-hdr-unsel">
+      <div className="chk-unsel" onClick={onSelect} />
+      <span style={{cursor:'pointer'}} onClick={onSelect}>Not Selected</span>
+      <span className="hdr-sp" />
+      <button className="roll-btn roll-btn-dk" onClick={()=>setModal({type:'roll',dealId:deal.id})}>Roll</button>
+      <button className="ibtn ibtn-dk" onClick={onDuplicate}><IcoCopy /></button>
+      <button className="ibtn ibtn-dk" onClick={onDelete}><IcoTrash /></button>
+      <button className="ibtn ibtn-dk" onClick={()=>setShowMenu(true)}><IcoMore /></button>
+    </div>
+  );
+
+  return (
+    <div className="deal-card">
+      {Hdr}
+      <div className="dc-body">
+        <div className="dc-top">
+          <div className="type-tabs">
+            {['finance','lease','cash'].map(t=>(
+              <button key={t} className={"btn-outline"+(deal.type===t?' active':'')}
+                style={{flex:1,textTransform:'capitalize'}} onClick={()=>upd('type',t)}>
+                {t.charAt(0).toUpperCase()+t.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          <div className="term-section">
+            {deal.type==='finance' && (
+              <div className="term-row">
+                <div className="term-f"><span className="term-lbl">Term</span><input className="term-inp" type="number" value={deal.term} onChange={e=>upd('term',e.target.value)} /></div>
+                <div className="term-f"><span className="term-lbl">Rate</span><input className="term-inp" type="number" value={deal.rate} onChange={e=>upd('rate',e.target.value)} /></div>
+              </div>
+            )}
+            {deal.type==='lease' && (
+              <div className="term-row">
+                <div className="term-f"><span className="term-lbl">Term</span><input className="term-inp" type="number" value={deal.term} onChange={e=>upd('term',e.target.value)} /></div>
+                <div className="term-f"><span className="term-lbl">MF</span><input className="term-inp" value={deal.mf} onChange={e=>upd('mf',e.target.value)} /></div>
+                <div className="term-f"><span className="term-lbl">Miles</span><input className="term-inp" type="number" value={deal.miles} onChange={e=>upd('miles',e.target.value)} /></div>
+                <div className="term-f"><span className="term-lbl" style={{color:'#C8102E'}}>Residual</span><input className="term-inp term-red" type="number" value={deal.residual} onChange={e=>upd('residual',e.target.value)} /></div>
+              </div>
+            )}
+          </div>
+
+          <div className="dp-section">
+            {deal.type==='cash' ? (
+              <div className="cash-big">${calc.footerVal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+            ) : (
+              <>
+                {deal.downPayments.map((dp,idx)=>(
+                  <div key={idx} className="dp-row">
+                    <div className={"dp-radio"+(deal.activeDP===idx?' dp-radio-on':'')} onClick={()=>setDPActive(idx)} />
+                    <input className="dp-amt" placeholder="Down Payment..."
+                      value={dp.amount===null?'':dp.amount}
+                      onChange={e=>setDPVal(idx,'amount',e.target.value===''?null:e.target.value)} />
+                    <span className={"dp-pay"+(deal.activeDP===idx?' dp-pay-on':'')}>
+                      {(() => { const p = calc.payments[idx]?.computed.payment; return p > 0 ? '$'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—'; })()}
+                    </span>
+                    {deal.downPayments.length>1 && (
+                      <button className="ibtn ibtn-dk" onClick={()=>removeDP(idx)} style={{marginLeft:2}}><IcoTrash /></button>
+                    )}
+                  </div>
+                ))}
+                {deal.downPayments.length<3 && (
+                  <button className="add-dp" onClick={addDP}><IcoPlus /> Add</button>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="dc-bottom">
+          <div className="sep" />
+          <SectionBlock label="Fees" data={fees} open={feesOpen} onToggle={()=>setFeesOpen(o=>!o)} onEdit={()=>setModal({type:'fees',dealId:deal.id})} />
+          <SectionBlock label="Addons" data={addons} open={addonsOpen} onToggle={()=>setAddonsOpen(o=>!o)} onEdit={()=>setModal({type:'addons',dealId:deal.id})} />
+          <SectionBlock label="Rebates" data={rebates} open={rebatesOpen} onToggle={()=>setRebatesOpen(o=>!o)} onEdit={()=>setModal({type:'rebates',dealId:deal.id})} />
+        </div>
+      </div>
+      <div className="dc-footer">
+        <span className="dc-foot-lbl">{footerLabel}</span>
+        <span className="dc-foot-val">{footerVal}</span>
+      </div>
+      {showMenu && <DealMenuModal deal={deal} onClose={()=>setShowMenu(false)} onDuplicate={onDuplicate} onDelete={onDelete} onChangeType={t=>upd('type',t)} />}
+    </div>
+  );
+}
+
+// ── APP DATA ─────────────────────────────────────────────────────────────────
+const INIT_CUSTOMER = {firstName:'Joyce',lastName:'Customerlady',address:'123 E Main St.',city:'Lancaster',state:'OH',zip:'43130',phone:'(614) 555-0182',email:'joyce.c@email.com'};
+const INIT_VEHICLE = {id:1,year:2026,make:'Honda',model:'Passport',trim:'EX-L',vin:'5FNYF9H58TB062578',stock:'HN264',msrp:50600,color:'Lunar Silver'};
+const INIT_PRICING = {msrp:50600,salePrice:49500,discount:1500,discountItems:[{label:'Discount',amount:-1500}],taxes:1660.50,taxRate:6.75,taxItems:[{label:'Fairfield, OH (6.75%)',amount:3341.25},{label:'OH Trade Allowance',amount:-1755}]};
+const INIT_TRADES = [
+  {id:1,year:2024,make:'Honda',model:'Civic',vin:'',allowance:49500,payoff:49500,acv:49500},
+  {id:2,year:2024,make:'Honda',model:'Civic',vin:'',allowance:49500,payoff:49500,acv:49500},
+];
+let _nid = 4;
+const INIT_DEALS = [
+  {id:1,type:'finance',selected:true,term:60,rate:4.99,downPayments:[{amount:null},{amount:5000},{amount:10000}],activeDP:2,fees:{items:[{label:'OH Doc Fee',amount:398},{label:'OH Title',amount:38}]},addons:{items:[{label:'BPP',amount:1499},{label:'All Season Mats',amount:299},{label:'SVC Contract',amount:3499}]},rebates:{items:[{label:'Loyalty',amount:1500},{label:'Finance Offer',amount:500}]},feesOpen:true,addonsOpen:true,rebatesOpen:true},
+  {id:2,type:'lease',selected:true,term:36,mf:'.00185',miles:12000,residual:59,downPayments:[{amount:5000},{amount:10000}],activeDP:1,fees:{items:[{label:'OH Doc Fee',amount:398},{label:'OH Title',amount:38},{label:'Honda Lease Acq. Fee',amount:595}]},addons:{items:[{label:'BPP',amount:1499},{label:'All Season Mats',amount:299},{label:'SVC Contract',amount:3499}]},rebates:{items:[{label:'Loyalty',amount:1500},{label:'Lease Offer',amount:1000}]},feesOpen:true,addonsOpen:false,rebatesOpen:true},
+  {id:3,type:'cash',selected:false,fees:{items:[{label:'OH Doc Fee',amount:398},{label:'OH Title',amount:38}]},addons:{items:[{label:'BPP',amount:1499},{label:'All Season Mats',amount:299},{label:'SVC Contract',amount:3499}]},rebates:{items:[]},feesOpen:false,addonsOpen:false,rebatesOpen:false},
+];
+
+// ── APP ──────────────────────────────────────────────────────────────────────
+function App() {
+  const [customer, setCustomer] = useState(INIT_CUSTOMER);
+  const [vehicle, setVehicle] = useState(INIT_VEHICLE);
+  const [pricing, setPricing] = useState(INIT_PRICING);
+  const [trades, setTrades] = useState(INIT_TRADES);
+  const [deals, setDeals] = useState(INIT_DEALS);
+  const [modal, setModal] = useState(null);
+
+  const updDeal = u => setDeals(ds=>ds.map(d=>d.id===u.id?u:d));
+  const delDeal = id => setDeals(ds=>ds.filter(d=>d.id!==id));
+  const dupDeal = id => { const src=deals.find(d=>d.id===id); setDeals(ds=>[...ds,{...src,id:++_nid,selected:false}]); };
+  const selDeal = id => setDeals(ds=>ds.map(d=>d.id===id?{...d,selected:!d.selected}:d));
+  const addDeal = () => setDeals(ds=>[...ds,{id:++_nid,type:'finance',selected:false,term:60,rate:4.99,downPayments:[{amount:null,payment:null}],activeDP:0,fees:{items:[]},addons:{items:[]},rebates:{items:[]}}]);
+  const getDeal = id => deals.find(d=>d.id===id);
+
+  const renderModal = () => {
+    if (!modal) return null;
+    const t = modal.type || modal;
+    if (t==='customer') return <CustomerModal customer={customer} onSave={c=>{setCustomer(c);setModal(null);}} onClose={()=>setModal(null)} />;
+    if (t==='vehicle') return <VehicleModal vehicle={vehicle} onSave={v=>{setVehicle(v);setPricing(p=>({...p,msrp:v.msrp,salePrice:v.msrp}));setModal(null);}} onClose={()=>setModal(null)} />;
+    if (t==='salePrice') return <SalePriceModal pricing={pricing} onSave={p=>{setPricing(p);setModal(null);}} onClose={()=>setModal(null)} />;
+    if (t==='tax') return <TaxModal pricing={pricing} onSave={p=>{setPricing(p);setModal(null);}} onClose={()=>setModal(null)} />;
+    if (t==='trade') return <TradeModal trades={trades} onSave={tr=>{setTrades(tr);setModal(null);}} onClose={()=>setModal(null)} />;
+    if (t==='roll') { const d=getDeal(modal.dealId); return d?<RollModal deal={d} onClose={()=>setModal(null)} />:null; }
+    if (t==='fees') { const d=getDeal(modal.dealId); return d?<LineItemModal title="Edit Fees" items={d.fees.items} onSave={items=>{updDeal({...d,fees:{items}});setModal(null);}} onClose={()=>setModal(null)} />:null; }
+    if (t==='addons') { const d=getDeal(modal.dealId); return d?<LineItemModal title="Edit Add-Ons" items={d.addons.items} onSave={items=>{updDeal({...d,addons:{items}});setModal(null);}} onClose={()=>setModal(null)} />:null; }
+    if (t==='rebates') { const d=getDeal(modal.dealId); return d?<LineItemModal title="Edit Rebates" items={d.rebates.items} onSave={items=>{updDeal({...d,rebates:{items}});setModal(null);}} onClose={()=>setModal(null)} />:null; }
+    return null;
+  };
+
+  return (
+    <React.Fragment>
+      <div className="topbar">
+        <button className="btn-red btn-red-lg"><IcoArrowLeft size={14} /> Back</button>
+        <div className="topbar-center">
+          <span className="topbar-lbl">Sales Associate:</span>
+          <span className="topbar-name">Chad Balser</span>
+        </div>
+        <button className="btn-red btn-red-lg"><IcoSend size={14} /> Send</button>
+        <button className="btn-red btn-red-lg"><IcoPrint size={14} /> Print</button>
+        <div className="avatar">AS</div>
+      </div>
+      <div className="content">
+        <div className="left-panel">
+          <CustomerCard customer={customer} onEdit={()=>setModal('customer')} />
+          <VehicleCard vehicle={vehicle} onEdit={()=>setModal('vehicle')} />
+          <PriceCard pricing={pricing} onEditSalePrice={()=>setModal('salePrice')} onEditTax={()=>setModal('tax')} onUpdateSalePrice={v=>setPricing(p=>({...p,salePrice:v}))} />
+          <TradesCard trades={trades} onEdit={()=>setModal('trade')} onUpdateTrade={(idx,k,v)=>setTrades(ts=>ts.map((t,n)=>n===idx?{...t,[k]:Number(v)}:t))} />
+        </div>
+        <div className="deals-area">
+          {deals.map(deal=>(
+            <DealCard key={deal.id} deal={deal} pricing={pricing} trades={trades} onUpdate={updDeal}
+              onSelect={()=>selDeal(deal.id)} onDuplicate={()=>dupDeal(deal.id)}
+              onDelete={()=>delDeal(deal.id)} setModal={setModal} />
+          ))}
+          <button className="add-deal-btn" onClick={addDeal} title="Add Deal">+</button>
+        </div>
+      </div>
+      {renderModal()}
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
