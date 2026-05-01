@@ -63,6 +63,8 @@ export interface Pricing {
   taxRate: number;
   taxItems: LineItem[];
   applyTradeAllowanceTax?: boolean;
+  county?: string;
+  transitRate?: number;
 }
 
 export interface Trade {

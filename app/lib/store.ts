@@ -23,6 +23,8 @@ const INIT_PRICING: Pricing = {
     { label: 'OH Trade Allowance', amount: -1755 },
   ],
   applyTradeAllowanceTax: true,
+  county: 'Fairfield',
+  transitRate: 0,
 };
 
 const INIT_TRADES: Trade[] = [
@@ -118,7 +120,17 @@ export const useDeskStore = create<DeskStore>()(
       setCustomer: (c) => set({ customer: c }),
       setVehicle: (v) => set({ vehicle: v }),
       setPricing: (p) => set({ pricing: p }),
-      updateSalePrice: (price) => set(s => ({ pricing: { ...s.pricing, salePrice: price } })),
+      updateSalePrice: (price) => set(s => {
+        const discount = Math.max(0, s.pricing.msrp - price);
+        return {
+          pricing: {
+            ...s.pricing,
+            salePrice: price,
+            discount,
+            discountItems: [{ label: 'Discount', amount: -discount }],
+          },
+        };
+      }),
       setTrades: (t) => set({ trades: t }),
       updateTrade: (idx, key, value) =>
         set(s => ({ trades: s.trades.map((t, n) => n === idx ? { ...t, [key]: value } : t) })),

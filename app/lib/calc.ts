@@ -78,22 +78,25 @@ export function calcTax(pricing: Pricing, deal: Deal, trades: Trade[]): { amount
   const rebates = (deal.rebates?.items ?? []).reduce((s, i) => s + Number(i.amount), 0);
   const taxableBase = (Number(pricing.salePrice) || 0) + addons - rebates;
   const taxRate = Number(pricing.taxRate) || 6.75;
+  const grossTax = taxableBase * (taxRate / 100);
 
   const totalAllowance = pricing.applyTradeAllowanceTax === false ? 0 : trades.reduce((s, t) => s + (Number(t.allowance) || 0), 0);
   const tradeCredit = totalAllowance * (taxRate / 100);
 
-  const stateTax = taxableBase * (taxRate / 100);
-  const total = stateTax - tradeCredit;
+  const county = pricing.county ?? '';
+  const transitRate = Number(pricing.transitRate ?? 0);
+  const countyRate = Math.round((taxRate - transitRate) * 100) / 100;
 
-  const taxLabel = (pricing.taxItems ?? []).find(i => i.amount >= 0)?.label
-    ?? `Tax (${taxRate}%)`;
+  const items: Array<{ label: string; amount: number }> = county
+    ? [
+        { label: `${county}, OH (${countyRate}%)`, amount: taxableBase * (countyRate / 100) },
+        ...(transitRate > 0 ? [{ label: `Transit Tax (${transitRate}%)`, amount: taxableBase * (transitRate / 100) }] : []),
+      ]
+    : [{ label: `Tax (${taxRate}%)`, amount: grossTax }];
 
-  const items: Array<{ label: string; amount: number }> = [
-    { label: taxLabel, amount: stateTax },
-    ...(tradeCredit > 0 ? [{ label: 'OH Trade Allowance', amount: -tradeCredit }] : []),
-  ];
+  if (tradeCredit > 0) items.push({ label: 'OH Trade Allowance', amount: -tradeCredit });
 
-  return { amount: total, items };
+  return { amount: grossTax - tradeCredit, items };
 }
 
 export const fmt = (n: number) =>
