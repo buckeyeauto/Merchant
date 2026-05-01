@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import s from './DealCard.module.css';
 import { calcDeal, mfToApr, fmt } from '@/lib/calc';
 import { IcoCopy, IcoTrash, IcoMore, IcoPlus, IcoX, IcoRefresh } from './icons';
@@ -28,6 +28,32 @@ interface Props {
 }
 
 // ── Local sub-components ─────────────────────────────────────────────────────
+
+function DeferredInput({
+  value,
+  onCommit,
+  ...rest
+}: Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> & {
+  value: string | number;
+  onCommit: (v: string) => void;
+}) {
+  const [local, setLocal] = useState(String(value ?? ''));
+  const focused = useRef(false);
+
+  useEffect(() => {
+    if (!focused.current) setLocal(String(value ?? ''));
+  }, [value]);
+
+  return (
+    <input
+      {...rest}
+      value={local}
+      onChange={e => setLocal(e.target.value)}
+      onFocus={e => { focused.current = true; (rest.onFocus as React.FocusEventHandler<HTMLInputElement>)?.(e); }}
+      onBlur={e => { focused.current = false; onCommit(local); (rest.onBlur as React.FocusEventHandler<HTMLInputElement>)?.(e); }}
+    />
+  );
+}
 
 function SectionBlock({
   label,
@@ -157,12 +183,19 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
   const [showMenu, setShowMenu] = useState(false);
   const [confirmApplyAll, setConfirmApplyAll] = useState<'fees' | 'addons' | 'rebates' | null>(null);
   const [showResCalc, setShowResCalc] = useState(false);
+  const [isCalcing, setIsCalcing] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const dragAllowed = useRef(false);
+  const calcTimer = useRef<ReturnType<typeof setTimeout>>();
 
   const calc = calcDeal(deal, pricing, trades);
 
-  const upd = <K extends keyof Deal>(k: K, v: Deal[K]) => onUpdate({ ...deal, [k]: v });
+  const upd = <K extends keyof Deal>(k: K, v: Deal[K]) => {
+    onUpdate({ ...deal, [k]: v });
+    clearTimeout(calcTimer.current);
+    setIsCalcing(true);
+    calcTimer.current = setTimeout(() => setIsCalcing(false), 550);
+  };
 
   // Down payment helpers
   const setDPActive = (idx: number) => upd('activeDP', idx);
@@ -170,6 +203,9 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
   const setDPVal = (idx: number, k: keyof { amount: number | null }, v: number | null) => {
     const dps = deal.downPayments.map((dp, i) => i === idx ? { ...dp, [k]: v } : dp);
     onUpdate({ ...deal, downPayments: dps });
+    clearTimeout(calcTimer.current);
+    setIsCalcing(true);
+    calcTimer.current = setTimeout(() => setIsCalcing(false), 550);
   };
 
   const addDP = () => {
@@ -248,22 +284,22 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
               <div className={s.termRow}>
                 <div className={s.termF}>
                   <div className={s.termLbl}>Term</div>
-                  <input
+                  <DeferredInput
                     className={s.termInp}
                     type="number"
                     value={deal.term || ''}
-                    onChange={e => upd('term', Number(e.target.value))}
+                    onCommit={v => upd('term', Number(v))}
                     placeholder="72"
                   />
                 </div>
                 <div className={s.termF}>
-                  <div className={s.termLbl}>Rate <span className={s.termRed}>%</span></div>
-                  <input
+                  <div className={s.termLbl}>Rate %</div>
+                  <DeferredInput
                     className={s.termInp}
                     type="number"
                     step="0.01"
                     value={deal.rate || ''}
-                    onChange={e => upd('rate', Number(e.target.value))}
+                    onCommit={v => upd('rate', Number(v))}
                     placeholder="6.99"
                   />
                 </div>
@@ -274,32 +310,12 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
               <div className={s.termRow}>
                 <div className={s.termF}>
                   <div className={s.termLbl}>Term</div>
-                  <input
+                  <DeferredInput
                     className={s.termInp}
                     type="number"
                     value={deal.term || ''}
-                    onChange={e => upd('term', Number(e.target.value))}
+                    onCommit={v => upd('term', Number(v))}
                     placeholder="36"
-                  />
-                </div>
-                <div className={s.termF}>
-                  <div className={s.termLbl}>MF</div>
-                  <input
-                    className={s.termInp}
-                    type="text"
-                    value={deal.mf}
-                    onChange={e => upd('mf', e.target.value)}
-                    placeholder=".00125"
-                  />
-                </div>
-                <div className={s.termF}>
-                  <div className={s.termLbl}>Miles</div>
-                  <input
-                    className={s.termInp}
-                    type="number"
-                    value={deal.miles || ''}
-                    onChange={e => upd('miles', Number(e.target.value))}
-                    placeholder="12000"
                   />
                 </div>
                 <div className={s.termF}>
@@ -308,26 +324,43 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
                       className={s.termRed}
                       style={{ cursor: 'pointer', userSelect: 'none' }}
                       onClick={() => setShowResCalc(v => !v)}
-                    >Res %</span>
+                    >MF</span>
                     {showResCalc && (
                       <>
                         <div style={{ position: 'fixed', inset: 0, zIndex: 15 }} onClick={() => setShowResCalc(false)} />
                         <div className={s.resPopover}>
-                          <div style={{ color: 'var(--text-3)', marginBottom: 2 }}>{deal.residual}% of ${fmt(pricing.msrp)}</div>
-                          <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--text)' }}>${fmt(pricing.msrp * deal.residual / 100)}</div>
-                          <div style={{ borderTop: '1px solid var(--border-3)', margin: '7px 0' }} />
                           <div style={{ color: 'var(--text-3)', marginBottom: 2 }}>MF {deal.mf}</div>
                           <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--text)' }}>{mfToApr(Number(deal.mf)).toFixed(2)}% APR</div>
                         </div>
                       </>
                     )}
                   </div>
-                  <input
+                  <DeferredInput
+                    className={s.termInp}
+                    type="text"
+                    value={deal.mf}
+                    onCommit={v => upd('mf', v)}
+                    placeholder=".00125"
+                  />
+                </div>
+                <div className={s.termF}>
+                  <div className={s.termLbl}>Miles</div>
+                  <DeferredInput
+                    className={s.termInp}
+                    type="number"
+                    value={deal.miles || ''}
+                    onCommit={v => upd('miles', Number(v))}
+                    placeholder="12000"
+                  />
+                </div>
+                <div className={s.termF}>
+                  <div className={s.termLbl}>Res %</div>
+                  <DeferredInput
                     className={s.termInp}
                     type="number"
                     step="0.1"
                     value={deal.residual || ''}
-                    onChange={e => upd('residual', Number(e.target.value))}
+                    onCommit={v => upd('residual', Number(v))}
                     placeholder="52"
                   />
                 </div>
@@ -352,14 +385,14 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
                         className={`${s.dpRadio}${isActive ? ' ' + s.dpRadioOn : ''}`}
                         onClick={() => setDPActive(idx)}
                       />
-                      <input
+                      <DeferredInput
                         className={s.dpAmt}
                         type="number"
                         value={dp.amount ?? ''}
-                        onChange={e => setDPVal(idx, 'amount', e.target.value === '' ? null : Number(e.target.value))}
+                        onCommit={v => setDPVal(idx, 'amount', v === '' ? null : Number(v))}
                         placeholder="Down"
                       />
-                      <div className={`${s.dpPay}${isActive ? ' ' + s.dpPayOn : ''}`}>
+                      <div className={[s.dpPay, isActive ? s.dpPayOn : '', isCalcing ? s.calcing : ''].filter(Boolean).join(' ')}>
                         ${fmt(payment)}
                       </div>
                       <button className={s.ibtn} onClick={() => {
@@ -417,7 +450,7 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
       {/* ── Footer ── */}
       <div className={s.dcFooter}>
         <span className={s.dcFootLbl}>{calc.footerLabel}</span>
-        <span className={s.dcFootVal}>${fmt(calc.footerVal)}</span>
+        <span className={[s.dcFootVal, isCalcing ? s.calcing : ''].filter(Boolean).join(' ')}>${fmt(calc.footerVal)}</span>
       </div>
 
       {/* ── Apply-all confirm ── */}

@@ -17,6 +17,7 @@ export default function PriceCard({ pricing, activeDeal, trades, onEditSalePrice
   const [priceOpen, setPriceOpen] = useState(true);
   const [taxOpen, setTaxOpen] = useState(true);
   const [salePriceFocused, setSalePriceFocused] = useState(false);
+  const [saleInput, setSaleInput] = useState('');
   const tax = calcTax(pricing, activeDeal, trades);
   return (
     <div className={styles.card}>
@@ -32,13 +33,10 @@ export default function PriceCard({ pricing, activeDeal, trades, onEditSalePrice
         <input
           className={styles.priceValInp}
           type="text"
-          value={salePriceFocused ? String(pricing.salePrice) : `$${Number(pricing.salePrice).toLocaleString()}`}
-          onChange={e => {
-            const raw = e.target.value.replace(/[^0-9.]/g, '');
-            onUpdateSalePrice(Number(raw) || 0);
-          }}
-          onFocus={e => { setSalePriceFocused(true); setTimeout(() => e.target.select(), 0); }}
-          onBlur={() => setSalePriceFocused(false)}
+          value={salePriceFocused ? saleInput : `$${Number(pricing.salePrice).toLocaleString()}`}
+          onChange={e => setSaleInput(e.target.value.replace(/[^0-9.]/g, ''))}
+          onFocus={e => { setSaleInput(String(pricing.salePrice)); setSalePriceFocused(true); setTimeout(() => e.target.select(), 0); }}
+          onBlur={() => { onUpdateSalePrice(Number(saleInput) || 0); setSalePriceFocused(false); }}
         />
       </div>
       {priceOpen && (pricing.discountItems ?? [{ label: 'Discount', amount: -pricing.discount }]).map((item, i) => (

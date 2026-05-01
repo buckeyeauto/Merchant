@@ -55,7 +55,7 @@ export default function DeskPage() {
     if (type === 'salePrice')
       return <SalePriceModal pricing={pricing} onSave={p => { setPricing(p); setModal(null); }} onClose={() => setModal(null)} />;
     if (type === 'tax')
-      return <TaxModal pricing={pricing} onSave={p => { setPricing(p); setModal(null); }} onClose={() => setModal(null)} />;
+      return <TaxModal pricing={pricing} customer={customer} onSave={p => { setPricing(p); setModal(null); }} onClose={() => setModal(null)} />;
     if (type === 'trade')
       return <TradeModal trades={trades} onSave={tr => { setTrades(tr); setModal(null); }} onClose={() => setModal(null)} />;
 
