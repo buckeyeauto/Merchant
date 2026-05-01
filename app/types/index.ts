@@ -62,6 +62,7 @@ export interface Pricing {
   taxes: number;
   taxRate: number;
   taxItems: LineItem[];
+  applyTradeAllowanceTax?: boolean;
 }
 
 export interface Trade {

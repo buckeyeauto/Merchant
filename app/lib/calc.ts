@@ -64,7 +64,7 @@ export function calcTax(pricing: Pricing, deal: Deal, trades: Trade[]): { amount
   const taxableBase = (Number(pricing.salePrice) || 0) + addons - rebates;
   const taxRate = Number(pricing.taxRate) || 6.75;
 
-  const totalAllowance = trades.reduce((s, t) => s + (Number(t.allowance) || 0), 0);
+  const totalAllowance = pricing.applyTradeAllowanceTax === false ? 0 : trades.reduce((s, t) => s + (Number(t.allowance) || 0), 0);
   const tradeCredit = totalAllowance * (taxRate / 100);
 
   const stateTax = taxableBase * (taxRate / 100);

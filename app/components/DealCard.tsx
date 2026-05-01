@@ -24,6 +24,7 @@ interface Props {
   onDragLeave?: (e: React.DragEvent) => void;
   onDrop?: () => void;
   onDragEnd?: () => void;
+  onApplyAll?: (section: 'fees' | 'addons' | 'rebates') => void;
 }
 
 // ── Local sub-components ─────────────────────────────────────────────────────
@@ -34,12 +35,14 @@ function SectionBlock({
   open,
   onToggle,
   onEdit,
+  onApplyAll,
 }: {
   label: string;
   data: LineItemGroup;
   open: boolean;
   onToggle: () => void;
   onEdit: () => void;
+  onApplyAll?: () => void;
 }) {
   const total = (data?.items ?? []).reduce((sum, i) => sum + Number(i.amount), 0);
   const hasItems = (data?.items ?? []).length > 0;
@@ -54,6 +57,7 @@ function SectionBlock({
         <button className={s.btnRed} onClick={onEdit}>
           {label}
         </button>
+        {onApplyAll && <button className={s.btnAll} onClick={onApplyAll}>All</button>}
         {hasItems ? (
           <span className={s.secTotal}>${fmt(total)}</span>
         ) : (
@@ -149,8 +153,9 @@ function DealMenuModal({
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function DealCard({ deal, pricing, trades, onUpdate, isActive, inGrid, onActivate, onDuplicate, onDelete, setModal, isDragging, isDropTarget, onDragStart, onDragOver, onDragLeave, onDrop, onDragEnd }: Props) {
+export default function DealCard({ deal, pricing, trades, onUpdate, isActive, inGrid, onActivate, onDuplicate, onDelete, setModal, isDragging, isDropTarget, onDragStart, onDragOver, onDragLeave, onDrop, onDragEnd, onApplyAll }: Props) {
   const [showMenu, setShowMenu] = useState(false);
+  const [confirmApplyAll, setConfirmApplyAll] = useState<'fees' | 'addons' | 'rebates' | null>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const dragAllowed = useRef(false);
 
@@ -369,6 +374,7 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
             open={deal.feesOpen}
             onToggle={() => upd('feesOpen', !deal.feesOpen)}
             onEdit={() => setModal({ type: 'fees', dealId: deal.id })}
+            onApplyAll={onApplyAll ? () => setConfirmApplyAll('fees') : undefined}
           />
           <SectionBlock
             label="Addons"
@@ -376,6 +382,7 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
             open={deal.addonsOpen}
             onToggle={() => upd('addonsOpen', !deal.addonsOpen)}
             onEdit={() => setModal({ type: 'addons', dealId: deal.id })}
+            onApplyAll={onApplyAll ? () => setConfirmApplyAll('addons') : undefined}
           />
           <SectionBlock
             label="Rebates"
@@ -383,6 +390,7 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
             open={deal.rebatesOpen}
             onToggle={() => upd('rebatesOpen', !deal.rebatesOpen)}
             onEdit={() => setModal({ type: 'rebates', dealId: deal.id })}
+            onApplyAll={onApplyAll ? () => setConfirmApplyAll('rebates') : undefined}
           />
         </div>
       </div>
@@ -392,6 +400,22 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
         <span className={s.dcFootLbl}>{calc.footerLabel}</span>
         <span className={s.dcFootVal}>${fmt(calc.footerVal)}</span>
       </div>
+
+      {/* ── Apply-all confirm ── */}
+      {confirmApplyAll && (
+        <div className={s.overlay} onClick={() => setConfirmApplyAll(null)}>
+          <div className={s.mbox} onClick={e => e.stopPropagation()}>
+            <div className={s.mtitle}>Apply to All Scenarios?</div>
+            <p style={{ fontSize: 13, color: 'var(--text-2)', margin: '0 0 18px' }}>
+              This will replace <strong>{confirmApplyAll}</strong> on all other deal cards with the items from this card.
+            </p>
+            <div className={s.mactions}>
+              <button className={s.btnCancel} onClick={() => setConfirmApplyAll(null)}>Cancel</button>
+              <button className={s.btnSave} onClick={() => { onApplyAll?.(confirmApplyAll); setConfirmApplyAll(null); }}>Yes, Apply All</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Menu modal ── */}
       {showMenu && (

@@ -22,6 +22,7 @@ const INIT_PRICING: Pricing = {
     { label: 'Fairfield, OH (6.75%)', amount: 3341.25 },
     { label: 'OH Trade Allowance', amount: -1755 },
   ],
+  applyTradeAllowanceTax: true,
 };
 
 const INIT_TRADES: Trade[] = [
@@ -98,6 +99,7 @@ interface DeskStore {
   getDeal: (id: number) => Deal | undefined;
 
   updateDealLineItems: (dealId: number, section: 'fees' | 'addons' | 'rebates', items: LineItem[]) => void;
+  applyLineItemsToAll: (dealId: number, section: 'fees' | 'addons' | 'rebates') => void;
 }
 
 export const useDeskStore = create<DeskStore>()(
@@ -164,6 +166,13 @@ export const useDeskStore = create<DeskStore>()(
         set(s => ({
           deals: s.deals.map(d => d.id === dealId ? { ...d, [section]: { items } } : d),
         })),
+      applyLineItemsToAll: (dealId, section) =>
+        set(s => {
+          const src = s.deals.find(d => d.id === dealId);
+          if (!src) return s;
+          const items = [...src[section].items];
+          return { deals: s.deals.map(d => d.id === dealId ? d : { ...d, [section]: { items } }) };
+        }),
     }),
     { name: 'desk-store' }
   )

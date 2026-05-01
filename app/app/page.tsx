@@ -23,7 +23,7 @@ export default function DeskPage() {
     setCustomer, setVehicle, setPricing, updateSalePrice,
     setTrades, updateTrade, setModal,
     updateDeal, deleteDeal, duplicateDeal, reorderDeals, activeDealId, setActiveDeal, addDeal, getDeal,
-    updateDealLineItems, brandIdx, setBrandIdx, darkMode, toggleDarkMode,
+    updateDealLineItems, applyLineItemsToAll, brandIdx, setBrandIdx, darkMode, toggleDarkMode,
   } = useDeskStore();
 
   const [draggedId, setDraggedId] = useState<number | null>(null);
@@ -153,6 +153,7 @@ export default function DeskPage() {
                 setDragOverId(null);
               }}
               onDragEnd={() => { setDraggedId(null); setDragOverId(null); }}
+              onApplyAll={(section) => applyLineItemsToAll(deal.id, section)}
             />
           ))}
           {deals.length < 6 && <button className={styles.addDealBtn} onClick={addDeal} title="Add Deal">+</button>}
