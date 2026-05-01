@@ -1,0 +1,36 @@
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.52); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.mbox { background: var(--surface); border-radius: 6px; padding: 20px 22px; min-width: 340px; max-width: 520px; width: 92%; box-shadow: 0 10px 40px rgba(0,0,0,0.28); }
+.mboxLg { max-width: 600px; }
+.mtitle { font-size: 15px; font-weight: 800; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+.ibtnDk { background: none; border: none; cursor: pointer; padding: 3px; display: inline-flex; align-items: center; border-radius: 3px; color: var(--text-3); }
+.ibtnDk:hover { background: var(--ibtn-hover); }
+
+/* shared form styles used by all modals */
+.mfield { margin-bottom: 11px; }
+.mfield label { display: block; font-size: 10px; color: var(--text-4); margin-bottom: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.mfield input, .mfield select { width: 100%; padding: 7px 10px; border: 1px solid var(--border-2); border-radius: 4px; font-family: inherit; font-size: 13px; background: var(--surface); color: var(--text); }
+.mfield input:focus, .mfield select:focus { outline: none; border-color: var(--brand); }
+.mrow { display: flex; gap: 10px; }
+.mrow .mfield { flex: 1; }
+.mactions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+.btnCancel { background: var(--surface); border: 1.5px solid var(--border-2); border-radius: 4px; padding: 7px 18px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--text-3); }
+.btnCancel:hover { background: var(--surface-2); }
+.btnSave { background: var(--brand); color: white; border: none; border-radius: 4px; padding: 7px 18px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; }
+.btnSave:hover { background: var(--brand-dark); }
+.msecTitle { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-4); margin: 14px 0 8px; border-top: 1px solid var(--border-3); padding-top: 10px; }
+.mitemRow { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.mitemRow input { flex: 1; padding: 5px 8px; border: 1px solid var(--border-2); border-radius: 4px; font-family: inherit; font-size: 12px; background: var(--surface-input); color: var(--text); }
+.iamt { width: 90px; flex-shrink: 0; text-align: right; }
+.btnAddItem { background: none; border: 1.5px dashed var(--brand); color: var(--brand); border-radius: 4px; padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 11px; font-weight: 700; width: 100%; margin-top: 4px; }
+.btnAddItem:hover { background: color-mix(in srgb, var(--brand) 6%, transparent); }
+.invRow { display: flex; justify-content: space-between; align-items: center; padding: 9px 10px; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 6px; cursor: pointer; }
+.invRow:hover { border-color: var(--brand); background: var(--surface-2); }
+.invRowSel { background: color-mix(in srgb, var(--brand) 4%, var(--surface)); border-color: var(--brand); }
+.taxRow { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border-3); font-size: 12px; }
+.rollFields { display: flex; gap: 10px; margin-bottom: 12px; }
+.rollF { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.rollF label { font-size: 10px; color: var(--text-4); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 4px; }
+.rollF input { text-align: center; border: 1px solid var(--border-2); border-radius: 4px; padding: 8px 6px; font-size: 16px; font-weight: 700; font-family: inherit; width: 100%; background: var(--surface-input); color: var(--text); }
+.rollResult { background: var(--surface-2); border-radius: 5px; padding: 14px; text-align: center; }
+.rollResLbl { font-size: 11px; color: var(--text-4); text-transform: uppercase; font-weight: 700; letter-spacing: 0.06em; }
+.rollResVal { font-size: 36px; font-weight: 800; color: var(--brand); margin-top: 4px; }

@@ -1,0 +1,275 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - button "Back" [ref=e3] [cursor=pointer]:
+      - img [ref=e4]
+      - text: Back
+    - generic [ref=e6]:
+      - generic [ref=e7]: "Sales Associate:"
+      - generic [ref=e8]: Chad Balser
+    - button "Send" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+      - text: Send
+    - button "Print" [ref=e12] [cursor=pointer]:
+      - img [ref=e13]
+      - text: Print
+    - generic [ref=e17] [cursor=pointer]: AS
+  - main [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic "Edit Customer" [ref=e22] [cursor=pointer]:
+          - img [ref=e23]
+        - generic [ref=e27]:
+          - generic [ref=e28]: Joyce Customerlady
+          - generic [ref=e29]:
+            - text: 123 E Main St.
+            - text: Lancaster, OH 43130
+      - generic [ref=e31]:
+        - generic "Select Vehicle" [ref=e32] [cursor=pointer]:
+          - img [ref=e33]
+        - generic [ref=e37]:
+          - generic [ref=e38]: 2026 Honda Passport
+          - generic [ref=e39]:
+            - text: 5FNYF9H58TB062578
+            - generic [ref=e40]: HN264
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]: MSRP
+          - generic [ref=e44]: $50,600
+        - generic [ref=e45]:
+          - button "Sale Price" [ref=e48] [cursor=pointer]
+          - spinbutton [ref=e49]: "49500"
+        - generic [ref=e50]:
+          - generic [ref=e51]: Discount
+          - generic [ref=e52]: "-$1,500"
+        - generic [ref=e53]:
+          - button "Taxes" [ref=e56] [cursor=pointer]
+          - generic [ref=e57]: $1,660.50
+        - generic [ref=e58]:
+          - generic [ref=e59]: Fairfield, OH (6.75%)
+          - generic [ref=e60]: $3,341.25
+        - generic [ref=e61]:
+          - generic [ref=e62]: OH Trade Allowance
+          - generic [ref=e63]: "-$1,755.00"
+      - generic [ref=e64]:
+        - generic [ref=e66]:
+          - generic "Edit Trades" [ref=e67] [cursor=pointer]:
+            - img [ref=e68]
+          - generic [ref=e73]: Trades
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]: 2024 Honda Civic
+            - generic [ref=e77]:
+              - generic [ref=e78]:
+                - spinbutton [ref=e79]: "49500"
+                - generic [ref=e80]: Allowance
+              - generic [ref=e81]:
+                - spinbutton [ref=e82]: "49500"
+                - generic [ref=e83]: Payoff
+              - generic [ref=e84]:
+                - spinbutton [ref=e85]: "49500"
+                - generic [ref=e86]: Acv
+          - generic [ref=e87]:
+            - generic [ref=e88]: 2024 Honda Civic
+            - generic [ref=e89]:
+              - generic [ref=e90]:
+                - spinbutton [ref=e91]: "49500"
+                - generic [ref=e92]: Allowance
+              - generic [ref=e93]:
+                - spinbutton [ref=e94]: "49500"
+                - generic [ref=e95]: Payoff
+              - generic [ref=e96]:
+                - spinbutton [ref=e97]: "49500"
+                - generic [ref=e98]: Acv
+    - generic [ref=e99]:
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - img [ref=e103] [cursor=pointer]
+          - generic [ref=e105] [cursor=pointer]: Selected
+          - button "Roll" [ref=e106] [cursor=pointer]
+          - button "Duplicate" [ref=e107] [cursor=pointer]:
+            - img [ref=e108]
+          - button "Delete" [ref=e112] [cursor=pointer]:
+            - img [ref=e113]
+          - button "More" [ref=e116] [cursor=pointer]:
+            - img [ref=e117]
+        - generic [ref=e121]:
+          - generic [ref=e122]:
+            - generic [ref=e123]:
+              - button "finance" [ref=e124] [cursor=pointer]
+              - button "lease" [ref=e125] [cursor=pointer]
+              - button "cash" [ref=e126] [cursor=pointer]
+            - generic [ref=e128]:
+              - generic [ref=e129]:
+                - generic [ref=e130]: Term
+                - spinbutton [ref=e131]: "60"
+              - generic [ref=e132]:
+                - generic [ref=e133]: Rate %
+                - spinbutton [ref=e134]: "4.99"
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - spinbutton [ref=e138]
+                - generic [ref=e139]: $1,035.66/mo
+                - button [ref=e140] [cursor=pointer]:
+                  - img [ref=e141]
+              - generic [ref=e144]:
+                - spinbutton [ref=e146]: "5000"
+                - generic [ref=e147]: $941.32/mo
+                - button [ref=e148] [cursor=pointer]:
+                  - img [ref=e149]
+              - generic [ref=e152]:
+                - spinbutton [ref=e154]: "10000"
+                - generic [ref=e155]: $846.99/mo
+                - button [ref=e156] [cursor=pointer]:
+                  - img [ref=e157]
+          - separator [ref=e160]
+          - generic [ref=e161]:
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - button "Fees" [ref=e165] [cursor=pointer]
+                - generic [ref=e166]: $436.00
+              - generic [ref=e167]:
+                - generic [ref=e168]:
+                  - generic [ref=e169]: OH Doc Fee
+                  - generic [ref=e170]: $398.00
+                - generic [ref=e171]:
+                  - generic [ref=e172]: OH Title
+                  - generic [ref=e173]: $38.00
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - button "Addons" [ref=e177] [cursor=pointer]
+                - generic [ref=e178]: $5,297.00
+              - generic [ref=e179]:
+                - generic [ref=e180]:
+                  - generic [ref=e181]: BPP
+                  - generic [ref=e182]: $1,499.00
+                - generic [ref=e183]:
+                  - generic [ref=e184]: All Season Mats
+                  - generic [ref=e185]: $299.00
+                - generic [ref=e186]:
+                  - generic [ref=e187]: SVC Contract
+                  - generic [ref=e188]: $3,499.00
+            - generic [ref=e189]:
+              - generic [ref=e190]:
+                - button "Rebates" [ref=e192] [cursor=pointer]
+                - generic [ref=e193]: $2,000.00
+              - generic [ref=e194]:
+                - generic [ref=e195]:
+                  - generic [ref=e196]: Loyalty
+                  - generic [ref=e197]: $1,500.00
+                - generic [ref=e198]:
+                  - generic [ref=e199]: Finance Offer
+                  - generic [ref=e200]: $500.00
+        - generic [ref=e201]:
+          - generic [ref=e202]: Amt. Financed
+          - generic [ref=e203]: $44,893.50
+      - generic [ref=e204]:
+        - generic [ref=e205]:
+          - img [ref=e207] [cursor=pointer]
+          - generic [ref=e209] [cursor=pointer]: Selected
+          - button "Roll" [ref=e210] [cursor=pointer]
+          - button "Duplicate" [ref=e211] [cursor=pointer]:
+            - img [ref=e212]
+          - button "Delete" [ref=e216] [cursor=pointer]:
+            - img [ref=e217]
+          - button "More" [ref=e220] [cursor=pointer]:
+            - img [ref=e221]
+        - generic [ref=e225]:
+          - generic [ref=e226]:
+            - generic [ref=e227]:
+              - button "finance" [ref=e228] [cursor=pointer]
+              - button "lease" [ref=e229] [cursor=pointer]
+              - button "cash" [ref=e230] [cursor=pointer]
+            - generic [ref=e232]:
+              - generic [ref=e233]:
+                - generic [ref=e234]: Term
+                - spinbutton [ref=e235]: "36"
+              - generic [ref=e236]:
+                - generic [ref=e237]: MF
+                - textbox ".00125" [ref=e238]: ".00185"
+              - generic [ref=e239]:
+                - generic [ref=e240]: Miles
+                - spinbutton [ref=e241]: "12000"
+              - generic [ref=e242]:
+                - generic [ref=e243]: Res %
+                - spinbutton [ref=e244]: "59"
+            - generic [ref=e245]:
+              - generic [ref=e246]:
+                - spinbutton [ref=e248]: "5000"
+                - generic [ref=e249]: $702.21/mo
+                - button [ref=e250] [cursor=pointer]:
+                  - img [ref=e251]
+              - generic [ref=e254]:
+                - spinbutton [ref=e256]: "10000"
+                - generic [ref=e257]: $544.07/mo
+                - button [ref=e258] [cursor=pointer]:
+                  - img [ref=e259]
+              - button "Add" [ref=e262] [cursor=pointer]:
+                - img [ref=e263]
+                - text: Add
+          - separator [ref=e265]
+          - generic [ref=e266]:
+            - generic [ref=e267]:
+              - generic [ref=e268]:
+                - button "Fees" [ref=e270] [cursor=pointer]
+                - generic [ref=e271]: $1,031.00
+              - generic [ref=e272]:
+                - generic [ref=e273]:
+                  - generic [ref=e274]: OH Doc Fee
+                  - generic [ref=e275]: $398.00
+                - generic [ref=e276]:
+                  - generic [ref=e277]: OH Title
+                  - generic [ref=e278]: $38.00
+                - generic [ref=e279]:
+                  - generic [ref=e280]: Honda Lease Acq. Fee
+                  - generic [ref=e281]: $595.00
+            - generic [ref=e283]:
+              - button "Addons" [ref=e285] [cursor=pointer]
+              - generic [ref=e286]: $5,297.00
+            - generic [ref=e287]:
+              - generic [ref=e288]:
+                - button "Rebates" [ref=e290] [cursor=pointer]
+                - generic [ref=e291]: $2,500.00
+              - generic [ref=e292]:
+                - generic [ref=e293]:
+                  - generic [ref=e294]: Loyalty
+                  - generic [ref=e295]: $1,500.00
+                - generic [ref=e296]:
+                  - generic [ref=e297]: Lease Offer
+                  - generic [ref=e298]: $1,000.00
+        - generic [ref=e299]:
+          - generic [ref=e300]: Cap Cost
+          - generic [ref=e301]: $43,328.00
+      - generic [ref=e302]:
+        - generic [ref=e303]:
+          - generic [ref=e305] [cursor=pointer]: Not Selected
+          - button "Roll" [ref=e306] [cursor=pointer]
+          - button "Duplicate" [ref=e307] [cursor=pointer]:
+            - img [ref=e308]
+          - button "Delete" [ref=e312] [cursor=pointer]:
+            - img [ref=e313]
+          - button "More" [ref=e316] [cursor=pointer]:
+            - img [ref=e317]
+        - generic [ref=e321]:
+          - generic [ref=e322]:
+            - generic [ref=e323]:
+              - button "finance" [ref=e324] [cursor=pointer]
+              - button "lease" [ref=e325] [cursor=pointer]
+              - button "cash" [ref=e326] [cursor=pointer]
+            - generic [ref=e329]: $56,893.50
+          - separator [ref=e330]
+          - generic [ref=e331]:
+            - generic [ref=e333]:
+              - button "Fees" [ref=e335] [cursor=pointer]
+              - generic [ref=e336]: $436.00
+            - generic [ref=e338]:
+              - button "Addons" [ref=e340] [cursor=pointer]
+              - generic [ref=e341]: $5,297.00
+            - generic [ref=e343]:
+              - button "Rebates" [ref=e345] [cursor=pointer]
+              - generic [ref=e346]: none added
+        - generic [ref=e347]:
+          - generic [ref=e348]: OTD Price
+          - generic [ref=e349]: $56,893.50
+      - button "+" [ref=e350] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e356] [cursor=pointer]:
+    - img [ref=e357]
