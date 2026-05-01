@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import s from './DealCard.module.css';
-import { calcDeal, fmt } from '@/lib/calc';
+import { calcDeal, mfToApr, fmt } from '@/lib/calc';
 import { IcoCopy, IcoTrash, IcoMore, IcoPlus, IcoX, IcoRefresh } from './icons';
 import type { Deal, Pricing, Trade, LineItemGroup } from '@/types';
 
@@ -156,6 +156,7 @@ function DealMenuModal({
 export default function DealCard({ deal, pricing, trades, onUpdate, isActive, inGrid, onActivate, onDuplicate, onDelete, setModal, isDragging, isDropTarget, onDragStart, onDragOver, onDragLeave, onDrop, onDragEnd, onApplyAll }: Props) {
   const [showMenu, setShowMenu] = useState(false);
   const [confirmApplyAll, setConfirmApplyAll] = useState<'fees' | 'addons' | 'rebates' | null>(null);
+  const [showResCalc, setShowResCalc] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const dragAllowed = useRef(false);
 
@@ -302,7 +303,25 @@ export default function DealCard({ deal, pricing, trades, onUpdate, isActive, in
                   />
                 </div>
                 <div className={s.termF}>
-                  <div className={s.termLbl}>Res <span className={s.termRed}>%</span></div>
+                  <div className={s.termLbl} style={{ position: 'relative' }}>
+                    <span
+                      className={s.termRed}
+                      style={{ cursor: 'pointer', userSelect: 'none' }}
+                      onClick={() => setShowResCalc(v => !v)}
+                    >Res %</span>
+                    {showResCalc && (
+                      <>
+                        <div style={{ position: 'fixed', inset: 0, zIndex: 15 }} onClick={() => setShowResCalc(false)} />
+                        <div className={s.resPopover}>
+                          <div style={{ color: 'var(--text-3)', marginBottom: 2 }}>{deal.residual}% of ${fmt(pricing.msrp)}</div>
+                          <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--text)' }}>${fmt(pricing.msrp * deal.residual / 100)}</div>
+                          <div style={{ borderTop: '1px solid var(--border-3)', margin: '7px 0' }} />
+                          <div style={{ color: 'var(--text-3)', marginBottom: 2 }}>MF {deal.mf}</div>
+                          <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--text)' }}>{mfToApr(Number(deal.mf)).toFixed(2)}% APR</div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                   <input
                     className={s.termInp}
                     type="number"

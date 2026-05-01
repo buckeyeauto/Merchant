@@ -460,6 +460,23 @@
 }
 .btnSave:hover { background: var(--brand-dark); }
 
+.resPopover {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 1.17rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+  z-index: 16;
+  text-align: center;
+  line-height: 1.5;
+}
+
 .btnAll {
   background: none;
   border: 1px solid var(--border-2);

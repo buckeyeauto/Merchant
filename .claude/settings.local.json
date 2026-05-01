@@ -8,7 +8,12 @@
       "Bash(Select-Object -First 20)",
       "PowerShell(Get-ChildItem -Path \"E:\\\\dev\\\\merchant\\\\app\\\\app\" -Recurse | Where-Object { $_.Extension -in @\\('.css', '.scss'\\) } | Select-Object -ExpandProperty FullName)",
       "Bash(Get-Content \"C:\\\\Users\\\\Shafe\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--dev-merchant\\\\01d73c87-73ad-437b-8824-17ced40cd2fd\\\\tasks\\\\bevqgrqmq.output\" -Wait)",
-      "Bash(Select-String -Pattern \"Local|ready|error|Error|failed|EADDRINUSE\")"
+      "Bash(Select-String -Pattern \"Local|ready|error|Error|failed|EADDRINUSE\")",
+      "Bash(git push *)",
+      "mcp__plugin_vercel_vercel__list_teams",
+      "mcp__plugin_vercel_vercel__list_projects",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
