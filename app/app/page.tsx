@@ -14,6 +14,7 @@ import TaxModal from '@/components/modals/TaxModal';
 import TradeModal from '@/components/modals/TradeModal';
 import RollModal from '@/components/modals/RollModal';
 import LineItemModal from '@/components/modals/LineItemModal';
+import UnderConstructionModal from '@/components/modals/UnderConstructionModal';
 import { IcoArrowLeft, IcoSend, IcoPrint } from '@/components/icons';
 
 export default function DeskPage() {
@@ -28,6 +29,7 @@ export default function DeskPage() {
   const [draggedId, setDraggedId] = useState<number | null>(null);
   const [dragOverId, setDragOverId] = useState<number | null>(null);
   const [avatarOpen, setAvatarOpen] = useState(false);
+  const [underConstruction, setUnderConstruction] = useState<string | null>(null);
 
   useEffect(() => {
     const { brand, dark } = BRAND_PALETTE[brandIdx];
@@ -71,20 +73,20 @@ export default function DeskPage() {
   return (
     <>
       <header className={styles.topbar}>
-        <button className={styles.btnRed}><IcoArrowLeft size={14} /> Back</button>
+        <button className={styles.btnRed} onClick={() => setUnderConstruction('Back')}><IcoArrowLeft size={14} /> Back</button>
         <div className={styles.topbarCenter}>
           <span className={styles.topbarLbl}>Sales Associate:</span>
           <span className={styles.topbarName}>Chad Balser</span>
         </div>
-        <button className={styles.btnRed}><IcoSend size={14} /> Send</button>
-        <button className={styles.btnRed}><IcoPrint size={14} /> Print</button>
+        <button className={styles.btnRed} onClick={() => setUnderConstruction('Send')}><IcoSend size={14} /> Send</button>
+        <button className={styles.btnRed} onClick={() => setUnderConstruction('Print')}><IcoPrint size={14} /> Print</button>
         <div className={styles.avatarWrap}>
           <div className={styles.avatar} onClick={() => setAvatarOpen(o => !o)}>AS</div>
           {avatarOpen && (
             <>
               <div className={styles.avatarBackdrop} onClick={() => setAvatarOpen(false)} />
               <div className={styles.avatarMenu}>
-                <div className={styles.avatarMenuItem}>Settings</div>
+                <div className={styles.avatarMenuItem} onClick={() => { setUnderConstruction('Settings'); setAvatarOpen(false); }}>Settings</div>
                 <div
                   className={`${styles.avatarMenuItem}${darkMode ? ' ' + styles.avatarMenuItemOn : ''}`}
                   onClick={toggleDarkMode}
@@ -157,6 +159,7 @@ export default function DeskPage() {
         </div>
       </main>
       {renderModal()}
+      {underConstruction && <UnderConstructionModal feature={underConstruction} onClose={() => setUnderConstruction(null)} />}
     </>
   );
 }

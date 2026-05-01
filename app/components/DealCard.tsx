@@ -21,7 +21,7 @@ interface Props {
   isDropTarget?: boolean;
   onDragStart?: () => void;
   onDragOver?: (e: React.DragEvent) => void;
-  onDragLeave?: () => void;
+  onDragLeave?: (e: React.DragEvent) => void;
   onDrop?: () => void;
   onDragEnd?: () => void;
 }
